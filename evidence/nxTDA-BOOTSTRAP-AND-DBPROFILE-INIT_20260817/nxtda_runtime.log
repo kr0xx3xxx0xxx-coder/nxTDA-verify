@@ -1,0 +1,35 @@
+2026-08-17T20:01:11.619+09:00  INFO 16360 --- [nxTDA] [main] com.nextobe.nxtda.NxTdaApplication       : Starting NxTdaApplication using Java 17.0.18 with PID 16360 (X:\Projects\nxTDA\build\classes\java\main started by nextobe_lyk in X:\Projects\nxTDA)
+2026-08-17T20:01:11.621+09:00  INFO 16360 --- [nxTDA] [main] com.nextobe.nxtda.NxTdaApplication       : No active profile set, falling back to 1 default profile: "default"
+2026-08-17T20:01:12.424+09:00  INFO 16360 --- [nxTDA] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8098 (http)
+2026-08-17T20:01:12.435+09:00  INFO 16360 --- [nxTDA] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-08-17T20:01:12.436+09:00  INFO 16360 --- [nxTDA] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.55]
+2026-08-17T20:01:12.485+09:00  INFO 16360 --- [nxTDA] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-08-17T20:01:12.486+09:00  INFO 16360 --- [nxTDA] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 828 ms
+2026-08-17T20:01:12.559+09:00  INFO 16360 --- [nxTDA] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-08-17T20:01:12.916+09:00  INFO 16360 --- [nxTDA] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn1: url=jdbc:h2:file:./data/nxtda_admin user=NXTDA
+2026-08-17T20:01:12.917+09:00  INFO 16360 --- [nxTDA] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-08-17T20:01:12.940+09:00  INFO 16360 --- [nxTDA] [main] c.n.nxtda.dbprofile.DbProfileService     : [DBPROFILE] ConnectionFactory 등록 완료 — 접속지원=[ORACLE] / 스텁=[DB2, MSSQL, TIBERO]
+2026-08-17T20:01:13.016+09:00  INFO 16360 --- [nxTDA] [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2026-08-17T20:01:13.218+09:00  INFO 16360 --- [nxTDA] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8098 (http) with context path '/'
+2026-08-17T20:01:13.226+09:00  INFO 16360 --- [nxTDA] [main] com.nextobe.nxtda.NxTdaApplication       : Started NxTdaApplication in 1.983 seconds (process running for 2.234)
+2026-08-17T20:02:19.567+09:00  INFO 16360 --- [nxTDA] [http-nio-8098-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-08-17T20:02:19.567+09:00  INFO 16360 --- [nxTDA] [http-nio-8098-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-08-17T20:02:19.568+09:00  INFO 16360 --- [nxTDA] [http-nio-8098-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-08-17T20:02:21.551+09:00  INFO 16360 --- [nxTDA] [http-nio-8098-exec-2] c.n.nxtda.dbprofile.DbProfileService     : [DBPROFILE] 프로필 저장 완료 name='Oracle_asis_BROWSER' dbms=ORACLE created=true hasPassword=true
+2026-08-17T20:02:22.336+09:00  INFO 16360 --- [nxTDA] [http-nio-8098-exec-4] c.n.n.d.impl.OracleConnectionFactory     : [ORACLE-CONNECT] 접속 시도 profile='Oracle_asis_BROWSER' url=jdbc:oracle:thin:@tcp://192.168.0.151:1523/xepdb1
+2026-08-17T20:02:22.700+09:00  INFO 16360 --- [nxTDA] [http-nio-8098-exec-4] c.n.n.d.impl.OracleConnectionFactory     : [ORACLE-CONNECT] 접속 성공 profile='Oracle_asis_BROWSER'
+2026-08-17T20:02:22.704+09:00  INFO 16360 --- [nxTDA] [http-nio-8098-exec-4] c.n.nxtda.dbprofile.DbProfileService     : [DBPROFILE] 접속 테스트 성공 name='Oracle_asis_BROWSER' elapsedMs=367 banner=Oracle Oracle AI Database 26ai Free Release 23.26.1.0.0 - Develop, Learn, and Run for Free
+Version 23.26.1.0.0
+2026-08-17T20:03:26.212+09:00  INFO 16360 --- [nxTDA] [http-nio-8098-exec-5] c.n.nxtda.dbprofile.DbProfileService     : [DBPROFILE] 프로필 저장 완료 name='Oracle_asis_TDA' dbms=ORACLE created=true hasPassword=true
+2026-08-17T20:03:26.229+09:00  INFO 16360 --- [nxTDA] [http-nio-8098-exec-6] c.n.nxtda.dbprofile.DbProfileService     : [DBPROFILE] 프로필 저장 완료 name='Oracle_asis_TDA' dbms=ORACLE created=false hasPassword=true
+2026-08-17T20:03:26.243+09:00  INFO 16360 --- [nxTDA] [http-nio-8098-exec-9] c.n.nxtda.dbprofile.DbProfileService     : [DBPROFILE] 프로필 저장 완료 name='Oracle_asis_TDA' dbms=ORACLE created=false hasPassword=true
+2026-08-17T20:03:26.442+09:00  INFO 16360 --- [nxTDA] [http-nio-8098-exec-1] c.n.nxtda.dbprofile.DbProfileService     : [DBPROFILE] 프로필 저장 완료 name='Oracle_SSL_REQUIRE' dbms=ORACLE created=true hasPassword=true
+2026-08-17T20:03:26.488+09:00  INFO 16360 --- [nxTDA] [http-nio-8098-exec-4] c.n.nxtda.dbprofile.DbProfileService     : [DBPROFILE] 프로필 저장 완료 name='Tibero_stub' dbms=TIBERO created=true hasPassword=true
+2026-08-17T20:03:26.503+09:00  INFO 16360 --- [nxTDA] [http-nio-8098-exec-7] c.n.n.d.impl.OracleConnectionFactory     : [ORACLE-CONNECT] 접속 시도 profile='Oracle_asis_TDA' url=jdbc:oracle:thin:@tcp://192.168.0.151:1523/xepdb1
+2026-08-17T20:03:26.621+09:00  INFO 16360 --- [nxTDA] [http-nio-8098-exec-7] c.n.n.d.impl.OracleConnectionFactory     : [ORACLE-CONNECT] 접속 성공 profile='Oracle_asis_TDA'
+2026-08-17T20:03:26.625+09:00  INFO 16360 --- [nxTDA] [http-nio-8098-exec-7] c.n.nxtda.dbprofile.DbProfileService     : [DBPROFILE] 접속 테스트 성공 name='Oracle_asis_TDA' elapsedMs=121 banner=Oracle Oracle AI Database 26ai Free Release 23.26.1.0.0 - Develop, Learn, and Run for Free
+Version 23.26.1.0.0
+2026-08-17T20:03:26.684+09:00  INFO 16360 --- [nxTDA] [http-nio-8098-exec-6] c.n.n.d.impl.OracleConnectionFactory     : [ORACLE-CONNECT] 접속 시도 profile='Oracle_SSL_REQUIRE' url=jdbc:oracle:thin:@tcps://192.168.0.151:1523/xepdb1
+2026-08-17T20:03:26.856+09:00  WARN 16360 --- [nxTDA] [http-nio-8098-exec-6] c.n.nxtda.dbprofile.DbProfileService     : [DBPROFILE] 접속 테스트 실패 name='Oracle_SSL_REQUIRE' elapsedMs=171 error=ORA-17002: I/O 오류: Connection closed, connect lapse 26 ms., Authentication lapse 0 ms.
+https://docs.oracle.com/error-help/db/ora-17002/
+2026-08-17T20:03:26.927+09:00  INFO 16360 --- [nxTDA] [http-nio-8098-exec-1] c.n.nxtda.dbprofile.DbProfileService     : [DBPROFILE] 프로필 삭제 name='Oracle_SSL_REQUIRE'

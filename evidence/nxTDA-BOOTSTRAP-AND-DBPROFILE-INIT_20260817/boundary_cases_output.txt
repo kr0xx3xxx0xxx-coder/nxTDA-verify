@@ -1,0 +1,190 @@
+﻿====================================================================================================
+nxTDA DB 프로필 경계값 검증 — 실행 중 JVM(http://127.0.0.1:8098) 대상
+====================================================================================================
+
+--- [케이스 1] 정상 등록(Oracle, SSL 미선택)
+    기대       : 200 created=true
+    요청       : POST /api/dbprofile/profiles
+    요청본문   : {"profileName": "Oracle_asis_TDA", "dbmsType": "ORACLE", "host": "192.168.0.151", "port": 1523, "databaseName": "xepdb1", "username": "nxdnp", "password": "<len=9>", "sslMode": "", "connectType": "service_name", "serviceName": "xepdb1", "sid": "XEPDB1", "schemaName": "NXDNP"}
+    응답상태   : 200
+    응답본문   : {"created":true,"message":"프로필을 등록했습니다.","ok":true,"profile":{"profileId":2,"profileName":"Oracle_asis_TDA","dbmsType":"ORACLE","host":"192.168.0.151","port":1523,"databaseName":"xepdb1","username":"nxdnp","sslMode":null,"connectType":"service_name","serviceName":"xepdb1","sid":"XEPDB1","schemaName":"NXDNP","hasPassword":true,"createdAt":"2026-08-17T20:03:26.212894","updatedAt":"2026-08-17T20:03:26.212894","lastUsedAt":null}}
+
+--- [케이스 2] 프로필명 중복 재등록(같은 이름 재POST)
+    기대       : 200 created=false (in-place 갱신)
+    요청       : POST /api/dbprofile/profiles
+    요청본문   : {"profileName": "Oracle_asis_TDA", "dbmsType": "ORACLE", "host": "192.168.0.151", "port": 1523, "databaseName": "xepdb1", "username": "nxdnp", "password": "<len=9>", "sslMode": "", "connectType": "service_name", "serviceName": "xepdb1", "sid": "XEPDB1", "schemaName": "NXDNP"}
+    응답상태   : 200
+    응답본문   : {"created":false,"message":"프로필을 수정했습니다.","ok":true,"profile":{"profileId":2,"profileName":"Oracle_asis_TDA","dbmsType":"ORACLE","host":"192.168.0.151","port":1523,"databaseName":"xepdb1","username":"nxdnp","sslMode":null,"connectType":"service_name","serviceName":"xepdb1","sid":"XEPDB1","schemaName":"NXDNP","hasPassword":true,"createdAt":"2026-08-17T20:03:26.212894","updatedAt":"2026-08-17T20:03:26.228263","lastUsedAt":null}}
+
+--- [케이스 3] 빈 비밀번호로 기존 프로필 수정(기존 값 유지)
+    기대       : 200 + hasPassword=true 유지
+    요청       : POST /api/dbprofile/profiles
+    요청본문   : {"profileName": "Oracle_asis_TDA", "dbmsType": "ORACLE", "host": "192.168.0.151", "port": 1523, "databaseName": "xepdb1", "username": "nxdnp", "password": "", "sslMode": "", "connectType": "service_name", "serviceName": "xepdb1", "sid": "XEPDB1", "schemaName": "NXDNP"}
+    응답상태   : 200
+    응답본문   : {"created":false,"message":"프로필을 수정했습니다.","ok":true,"profile":{"profileId":2,"profileName":"Oracle_asis_TDA","dbmsType":"ORACLE","host":"192.168.0.151","port":1523,"databaseName":"xepdb1","username":"nxdnp","sslMode":null,"connectType":"service_name","serviceName":"xepdb1","sid":"XEPDB1","schemaName":"NXDNP","hasPassword":true,"createdAt":"2026-08-17T20:03:26.212894","updatedAt":"2026-08-17T20:03:26.243101","lastUsedAt":null}}
+
+--- [케이스 4] 빈 비밀번호 + 신규 프로필
+    기대       : 400 PASSWORD_REQUIRED
+    요청       : POST /api/dbprofile/profiles
+    요청본문   : {"profileName": "NEW_NO_PW", "dbmsType": "ORACLE", "host": "192.168.0.151", "port": 1523, "databaseName": "xepdb1", "username": "nxdnp", "password": "", "sslMode": "", "connectType": "service_name", "serviceName": "xepdb1", "sid": "XEPDB1", "schemaName": "NXDNP"}
+    응답상태   : 400
+    응답본문   : {"errorMessage":"비밀번호를 입력하세요(신규 프로필이거나 저장된 비밀번호가 없습니다).","errorCode":"PASSWORD_REQUIRED","ok":false}
+
+--- [케이스 5] 프로필명 빈값
+    기대       : 400 PROFILE_NAME_REQUIRED
+    요청       : POST /api/dbprofile/profiles
+    요청본문   : {"profileName": "  ", "dbmsType": "ORACLE", "host": "192.168.0.151", "port": 1523, "databaseName": "xepdb1", "username": "nxdnp", "password": "<len=9>", "sslMode": "", "connectType": "service_name", "serviceName": "xepdb1", "sid": "XEPDB1", "schemaName": "NXDNP"}
+    응답상태   : 400
+    응답본문   : {"errorMessage":"프로필명을 입력하세요.","errorCode":"PROFILE_NAME_REQUIRED","ok":false}
+
+--- [케이스 6] 프로필명 101자
+    기대       : 400 PROFILE_NAME_TOO_LONG
+    요청       : POST /api/dbprofile/profiles
+    요청본문   : {"profileName": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "dbmsType": "ORACLE", "host": "192.168.0.151", "port": 1523, "databaseName": "xepdb1", "username": "nxdnp", "password": "<len=9>", "sslMode": "", "connectType": "service_name", "serviceName": "xepdb1", "sid": "XEPDB1", "schemaName": "NXDNP"}
+    응답상태   : 400
+    응답본문   : {"errorMessage":"프로필명은 100자 이내여야 합니다(입력 101자).","errorCode":"PROFILE_NAME_TOO_LONG","ok":false}
+
+--- [케이스 7] 존재하지 않는 DBMS 타입(POSTGRESQL)
+    기대       : 400 DBMS_TYPE_INVALID
+    요청       : POST /api/dbprofile/profiles
+    요청본문   : {"profileName": "PG_NOT_SUPPORTED", "dbmsType": "POSTGRESQL", "host": "192.168.0.151", "port": 1523, "databaseName": "xepdb1", "username": "nxdnp", "password": "<len=9>", "sslMode": "", "connectType": "service_name", "serviceName": "xepdb1", "sid": "XEPDB1", "schemaName": "NXDNP"}
+    응답상태   : 400
+    응답본문   : {"errorMessage":"지원하지 않는 DBMS 종류입니다. 지원 목록: ORACLE / DB2 / TIBERO / MSSQL","errorCode":"DBMS_TYPE_INVALID","ok":false}
+
+--- [케이스 8] DBMS 타입 미선택(빈값)
+    기대       : 400 DBMS_TYPE_INVALID
+    요청       : POST /api/dbprofile/profiles
+    요청본문   : {"profileName": "NO_DBMS", "dbmsType": "", "host": "192.168.0.151", "port": 1523, "databaseName": "xepdb1", "username": "nxdnp", "password": "<len=9>", "sslMode": "", "connectType": "service_name", "serviceName": "xepdb1", "sid": "XEPDB1", "schemaName": "NXDNP"}
+    응답상태   : 400
+    응답본문   : {"errorMessage":"지원하지 않는 DBMS 종류입니다. 지원 목록: ORACLE / DB2 / TIBERO / MSSQL","errorCode":"DBMS_TYPE_INVALID","ok":false}
+
+--- [케이스 9] 호스트 빈값
+    기대       : 400 HOST_REQUIRED
+    요청       : POST /api/dbprofile/profiles
+    요청본문   : {"profileName": "NO_HOST", "dbmsType": "ORACLE", "host": "", "port": 1523, "databaseName": "xepdb1", "username": "nxdnp", "password": "<len=9>", "sslMode": "", "connectType": "service_name", "serviceName": "xepdb1", "sid": "XEPDB1", "schemaName": "NXDNP"}
+    응답상태   : 400
+    응답본문   : {"errorMessage":"호스트를 입력하세요.","errorCode":"HOST_REQUIRED","ok":false}
+
+--- [케이스 10] 포트 0
+    기대       : 400 PORT_INVALID
+    요청       : POST /api/dbprofile/profiles
+    요청본문   : {"profileName": "PORT_0", "dbmsType": "ORACLE", "host": "192.168.0.151", "port": 0, "databaseName": "xepdb1", "username": "nxdnp", "password": "<len=9>", "sslMode": "", "connectType": "service_name", "serviceName": "xepdb1", "sid": "XEPDB1", "schemaName": "NXDNP"}
+    응답상태   : 400
+    응답본문   : {"errorMessage":"포트는 1~65535 범위의 숫자여야 합니다.","errorCode":"PORT_INVALID","ok":false}
+
+--- [케이스 11] 포트 70000
+    기대       : 400 PORT_INVALID
+    요청       : POST /api/dbprofile/profiles
+    요청본문   : {"profileName": "PORT_70000", "dbmsType": "ORACLE", "host": "192.168.0.151", "port": 70000, "databaseName": "xepdb1", "username": "nxdnp", "password": "<len=9>", "sslMode": "", "connectType": "service_name", "serviceName": "xepdb1", "sid": "XEPDB1", "schemaName": "NXDNP"}
+    응답상태   : 400
+    응답본문   : {"errorMessage":"포트는 1~65535 범위의 숫자여야 합니다.","errorCode":"PORT_INVALID","ok":false}
+
+--- [케이스 12] 포트 null
+    기대       : 400 PORT_INVALID
+    요청       : POST /api/dbprofile/profiles
+    요청본문   : {"profileName": "PORT_NULL", "dbmsType": "ORACLE", "host": "192.168.0.151", "port": null, "databaseName": "xepdb1", "username": "nxdnp", "password": "<len=9>", "sslMode": "", "connectType": "service_name", "serviceName": "xepdb1", "sid": "XEPDB1", "schemaName": "NXDNP"}
+    응답상태   : 400
+    응답본문   : {"errorMessage":"포트는 1~65535 범위의 숫자여야 합니다.","errorCode":"PORT_INVALID","ok":false}
+
+--- [케이스 13] 계정 빈값
+    기대       : 400 USERNAME_REQUIRED
+    요청       : POST /api/dbprofile/profiles
+    요청본문   : {"profileName": "NO_USER", "dbmsType": "ORACLE", "host": "192.168.0.151", "port": 1523, "databaseName": "xepdb1", "username": "", "password": "<len=9>", "sslMode": "", "connectType": "service_name", "serviceName": "xepdb1", "sid": "XEPDB1", "schemaName": "NXDNP"}
+    응답상태   : 400
+    응답본문   : {"errorMessage":"접속 계정을 입력하세요.","errorCode":"USERNAME_REQUIRED","ok":false}
+
+--- [케이스 14] SSL 모드 오타(requre)
+    기대       : 400 SSL_MODE_INVALID
+    요청       : POST /api/dbprofile/profiles
+    요청본문   : {"profileName": "SSL_TYPO", "dbmsType": "ORACLE", "host": "192.168.0.151", "port": 1523, "databaseName": "xepdb1", "username": "nxdnp", "password": "<len=9>", "sslMode": "requre", "connectType": "service_name", "serviceName": "xepdb1", "sid": "XEPDB1", "schemaName": "NXDNP"}
+    응답상태   : 400
+    응답본문   : {"errorMessage":"SSL 모드는 disable / require / verify-ca / verify-full 중 하나이거나 미선택이어야 합니다.","errorCode":"SSL_MODE_INVALID","ok":false}
+
+--- [케이스 15] SSL 모드 정상값(require) 저장
+    기대       : 200 sslMode=require
+    요청       : POST /api/dbprofile/profiles
+    요청본문   : {"profileName": "Oracle_SSL_REQUIRE", "dbmsType": "ORACLE", "host": "192.168.0.151", "port": 1523, "databaseName": "xepdb1", "username": "nxdnp", "password": "<len=9>", "sslMode": "require", "connectType": "service_name", "serviceName": "xepdb1", "sid": "XEPDB1", "schemaName": "NXDNP"}
+    응답상태   : 200
+    응답본문   : {"created":true,"message":"프로필을 등록했습니다.","ok":true,"profile":{"profileId":3,"profileName":"Oracle_SSL_REQUIRE","dbmsType":"ORACLE","host":"192.168.0.151","port":1523,"databaseName":"xepdb1","username":"nxdnp","sslMode":"require","connectType":"service_name","serviceName":"xepdb1","sid":"XEPDB1","schemaName":"NXDNP","hasPassword":true,"createdAt":"2026-08-17T20:03:26.442486","updatedAt":"2026-08-17T20:03:26.442486","lastUsedAt":null}}
+
+--- [케이스 16] Oracle connectType=sid + SID 빈값
+    기대       : 400 CONNECT_TARGET_REQUIRED
+    요청       : POST /api/dbprofile/profiles
+    요청본문   : {"profileName": "SID_MISSING", "dbmsType": "ORACLE", "host": "192.168.0.151", "port": 1523, "databaseName": "xepdb1", "username": "nxdnp", "password": "<len=9>", "sslMode": "", "connectType": "sid", "serviceName": "xepdb1", "sid": "", "schemaName": "NXDNP"}
+    응답상태   : 400
+    응답본문   : {"errorMessage":"접속 방식이 sid 이면 SID 값을 입력하세요.","errorCode":"CONNECT_TARGET_REQUIRED","ok":false}
+
+--- [케이스 17] Oracle connectType 오타(servicename)
+    기대       : 400 CONNECT_TYPE_INVALID
+    요청       : POST /api/dbprofile/profiles
+    요청본문   : {"profileName": "CT_TYPO", "dbmsType": "ORACLE", "host": "192.168.0.151", "port": 1523, "databaseName": "xepdb1", "username": "nxdnp", "password": "<len=9>", "sslMode": "", "connectType": "servicename", "serviceName": "xepdb1", "sid": "XEPDB1", "schemaName": "NXDNP"}
+    응답상태   : 400
+    응답본문   : {"errorMessage":"Oracle 접속 방식은 service_name 또는 sid 여야 합니다.","errorCode":"CONNECT_TYPE_INVALID","ok":false}
+
+--- [케이스 18] 스텁 DBMS(TIBERO) 프로필 등록
+    기대       : 200 (등록 자체는 가능)
+    요청       : POST /api/dbprofile/profiles
+    요청본문   : {"profileName": "Tibero_stub", "dbmsType": "TIBERO", "host": "192.168.0.99", "port": 8629, "databaseName": "tibero", "username": "sys", "password": "<len=14>", "sslMode": "", "connectType": "", "serviceName": "", "sid": "", "schemaName": ""}
+    응답상태   : 200
+    응답본문   : {"created":true,"message":"프로필을 등록했습니다.","ok":true,"profile":{"profileId":4,"profileName":"Tibero_stub","dbmsType":"TIBERO","host":"192.168.0.99","port":8629,"databaseName":"tibero","username":"sys","sslMode":null,"connectType":null,"serviceName":null,"sid":null,"schemaName":null,"hasPassword":true,"createdAt":"2026-08-17T20:03:26.487875","updatedAt":"2026-08-17T20:03:26.487875","lastUsedAt":null}}
+
+====================================================================================================
+접속 테스트 (비밀번호는 클라이언트가 보내지 않는다 — 요청 본문 없음)
+====================================================================================================
+
+--- [케이스 19] 실 Oracle 접속 테스트
+    기대       : 200 ok=true + DB 배너
+    요청       : POST /api/dbprofile/profiles/Oracle_asis_TDA/connection-test  (본문 없음)
+    응답상태   : 200
+    응답본문   : {"ok":true,"errorCode":null,"message":"접속 성공 (121ms)","databaseBanner":"Oracle Oracle AI Database 26ai Free Release 23.26.1.0.0 - Develop, Learn, and Run for Free\nVersion 23.26.1.0.0","jdbcUrl":"jdbc:oracle:thin:@tcp://192.168.0.151:1523/xepdb1","elapsedMs":121}
+
+--- [케이스 20] 스텁 어댑터(TIBERO) 접속 테스트
+    기대       : 400 ADAPTER_NOT_IMPLEMENTED
+    요청       : POST /api/dbprofile/profiles/Tibero_stub/connection-test  (본문 없음)
+    응답상태   : 400
+    응답본문   : {"ok":false,"errorCode":"ADAPTER_NOT_IMPLEMENTED","message":"Tibero 어댑터 미구현 — Tibero JDBC 드라이버가 공개 저장소에 배포되지 않아 (TmaxSoft 라이선스 필요) 드라이버 자체를 확보하지 못했습니다. 라이선스 확보 후 build.gradle 의 Tibero 의존성 주석을 해제하고 구현합니다.","databaseBanner":null,"jdbcUrl":null,"elapsedMs":0}
+
+--- [케이스 21] 존재하지 않는 프로필 접속 테스트
+    기대       : 400 PROFILE_NOT_FOUND
+    요청       : POST /api/dbprofile/profiles/NO_SUCH_PROFILE/connection-test  (본문 없음)
+    응답상태   : 400
+    응답본문   : {"ok":false,"errorCode":"PROFILE_NOT_FOUND","message":"프로필을 찾을 수 없습니다: NO_SUCH_PROFILE","databaseBanner":null,"jdbcUrl":null,"elapsedMs":0}
+
+--- [케이스 22] SSL require 프로필 접속 테스트(비SSL 리스너 → 실패 예상)
+    기대       : 400 CONNECT_FAILED — SSL 옵션이 URL/프로퍼티에 실제 반영됨을 확인
+    요청       : POST /api/dbprofile/profiles/Oracle_SSL_REQUIRE/connection-test  (본문 없음)
+    응답상태   : 400
+    응답본문   : {"ok":false,"errorCode":"CONNECT_FAILED","message":"SQLRecoverableException: ORA-17002: I/O 오류: Connection closed, connect lapse 26 ms., Authentication lapse 0 ms.\r\nhttps://docs.oracle.com/error-help/db/ora-17002/","databaseBanner":null,"jdbcUrl":"jdbc:oracle:thin:@tcps://192.168.0.151:1523/xepdb1","elapsedMs":171}
+
+====================================================================================================
+목록 응답 원문 — password 노출 검사
+====================================================================================================
+GET /api/dbprofile/profiles → 200
+[{"profileId":1,"profileName":"Oracle_asis_BROWSER","dbmsType":"ORACLE","host":"192.168.0.151","port":1523,"databaseName":"xepdb1","username":"nxdnp","sslMode":null,"connectType":"service_name","serviceName":"xepdb1","sid":null,"schemaName":"NXDNP","hasPassword":true,"createdAt":"2026-08-17T20:02:21.543273","updatedAt":"2026-08-17T20:02:21.543273","lastUsedAt":"2026-08-17T20:02:22.702801"},{"profileId":2,"profileName":"Oracle_asis_TDA","dbmsType":"ORACLE","host":"192.168.0.151","port":1523,"databaseName":"xepdb1","username":"nxdnp","sslMode":null,"connectType":"service_name","serviceName":"xepdb1","sid":"XEPDB1","schemaName":"NXDNP","hasPassword":true,"createdAt":"2026-08-17T20:03:26.212894","updatedAt":"2026-08-17T20:03:26.243101","lastUsedAt":"2026-08-17T20:03:26.624747"},{"profileId":3,"profileName":"Oracle_SSL_REQUIRE","dbmsType":"ORACLE","host":"192.168.0.151","port":1523,"databaseName":"xepdb1","username":"nxdnp","sslMode":"require","connectType":"service_name","serviceName":"xepdb1","sid":"XEPDB1","schemaName":"NXDNP","hasPassword":true,"createdAt":"2026-08-17T20:03:26.442486","updatedAt":"2026-08-17T20:03:26.442486","lastUsedAt":"2026-08-17T20:03:26.856327"},{"profileId":4,"profileName":"Tibero_stub","dbmsType":"TIBERO","host":"192.168.0.99","port":8629,"databaseName":"tibero","username":"sys","sslMode":null,"connectType":null,"serviceName":null,"sid":null,"schemaName":null,"hasPassword":true,"createdAt":"2026-08-17T20:03:26.487875","updatedAt":"2026-08-17T20:03:26.487875","lastUsedAt":null}]
+
+[검사] 응답 원문에 'password' 키 포함 여부 : False
+[검사] 응답 원문에 저장된 실제 비밀번호 값 포함 여부 : False
+[검사] hasPassword 필드 존재 여부 : True
+
+GET /api/dbprofile/profiles/Oracle_asis_TDA → 200
+{"profileId":2,"profileName":"Oracle_asis_TDA","dbmsType":"ORACLE","host":"192.168.0.151","port":1523,"databaseName":"xepdb1","username":"nxdnp","sslMode":null,"connectType":"service_name","serviceName":"xepdb1","sid":"XEPDB1","schemaName":"NXDNP","hasPassword":true,"createdAt":"2026-08-17T20:03:26.212894","updatedAt":"2026-08-17T20:03:26.243101","lastUsedAt":"2026-08-17T20:03:26.624747"}
+
+[검사] 단건 응답에 'password' 키 포함 여부 : False
+[검사] 단건 응답에 실제 비밀번호 값 포함 여부 : False
+
+====================================================================================================
+삭제 케이스
+====================================================================================================
+
+--- [케이스 23] 정상 삭제
+    기대     : 200 ok=true
+    응답상태 : 200
+    응답본문 : {"message":"프로필을 삭제했습니다.","ok":true}
+
+--- [케이스 24] 존재하지 않는 프로필 삭제
+    기대     : 404 PROFILE_NOT_FOUND
+    응답상태 : 404
+    응답본문 : {"errorMessage":"프로필을 찾을 수 없습니다: NO_SUCH_PROFILE","errorCode":"PROFILE_NOT_FOUND","ok":false}
+
+최종 목록:
+[{"profileId":1,"profileName":"Oracle_asis_BROWSER","dbmsType":"ORACLE","host":"192.168.0.151","port":1523,"databaseName":"xepdb1","username":"nxdnp","sslMode":null,"connectType":"service_name","serviceName":"xepdb1","sid":null,"schemaName":"NXDNP","hasPassword":true,"createdAt":"2026-08-17T20:02:21.543273","updatedAt":"2026-08-17T20:02:21.543273","lastUsedAt":"2026-08-17T20:02:22.702801"},{"profileId":2,"profileName":"Oracle_asis_TDA","dbmsType":"ORACLE","host":"192.168.0.151","port":1523,"databaseName":"xepdb1","username":"nxdnp","sslMode":null,"connectType":"service_name","serviceName":"xepdb1","sid":"XEPDB1","schemaName":"NXDNP","hasPassword":true,"createdAt":"2026-08-17T20:03:26.212894","updatedAt":"2026-08-17T20:03:26.243101","lastUsedAt":"2026-08-17T20:03:26.624747"},{"profileId":4,"profileName":"Tibero_stub","dbmsType":"TIBERO","host":"192.168.0.99","port":8629,"databaseName":"tibero","username":"sys","sslMode":null,"connectType":null,"serviceName":null,"sid":null,"schemaName":null,"hasPassword":true,"createdAt":"2026-08-17T20:03:26.487875","updatedAt":"2026-08-17T20:03:26.487875","lastUsedAt":null}]

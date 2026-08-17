@@ -1,0 +1,62 @@
+﻿====================================================================================================
+STEP 1 — /dbprofile 화면 진입
+====================================================================================================
+페이지 타이틀: DB 프로필 관리 — nxTDA
+h2.page-title : DB 프로필 관리
+
+====================================================================================================
+STEP 2 — 폼 입력 후 [프로필 등록] 버튼 실제 클릭
+====================================================================================================
+입력 완료 — 비밀번호 입력칸 길이: 9
+화면 알림: 프로필을 등록했습니다. (프로필: Oracle_asis_BROWSER)
+저장 직후 비밀번호 입력칸 길이(화면에 비밀번호를 남기지 않는지): 0
+
+목록 테이블 렌더 결과:
+    Oracle_asis_BROWSER | ORACLE | 192.168.0.151:1523 | nxdnp | (미선택) | 저장됨 | 접속테스트 삭제
+
+====================================================================================================
+STEP 3 — 저장된 프로필로 [접속테스트] 버튼 실제 클릭 (실 Oracle)
+====================================================================================================
+화면 알림: [Oracle_asis_BROWSER] 접속 성공 (367ms) / Oracle Oracle AI Database 26ai Free Release 23.26.1.0.0 - Develop, Learn, and Run for Free Version 23.26.1.0.0
+
+====================================================================================================
+STEP 4 — 브라우저가 실제로 주고받은 통신 원문 (개발자도구 Network 탭 상당)
+====================================================================================================
+
+[REQUEST] POST http://127.0.0.1:8098/api/dbprofile/profiles
+  요청본문: {"profileName":"Oracle_asis_BROWSER","dbmsType":"ORACLE","host":"192.168.0.151","port":1523,"databaseName":"xepdb1","username":"nxdnp","password":"<<MASKED-PASSWORD len=9>>","sslMode":"","connectType":"service_name","serviceName":"xepdb1","sid":"","schemaName":"NXDNP"}
+
+[REQUEST] GET http://127.0.0.1:8098/api/dbprofile/profiles
+  요청본문: (본문 없음)
+
+[RESPONSE] 200 http://127.0.0.1:8098/api/dbprofile/profiles
+  응답본문: {"created":true,"message":"프로필을 등록했습니다.","ok":true,"profile":{"profileId":1,"profileName":"Oracle_asis_BROWSER","dbmsType":"ORACLE","host":"192.168.0.151","port":1523,"databaseName":"xepdb1","username":"nxdnp","sslMode":null,"connectType":"service_name","serviceName":"xepdb1","sid":null,"schemaName":"NXDNP","hasPassword":true,"createdAt":"2026-08-17T20:02:21.543273","updatedAt":"2026-08-17T20:02:21.543273","lastUsedAt":null}}
+
+[RESPONSE] 200 http://127.0.0.1:8098/api/dbprofile/profiles
+  응답본문: [{"profileId":1,"profileName":"Oracle_asis_BROWSER","dbmsType":"ORACLE","host":"192.168.0.151","port":1523,"databaseName":"xepdb1","username":"nxdnp","sslMode":null,"connectType":"service_name","serviceName":"xepdb1","sid":null,"schemaName":"NXDNP","hasPassword":true,"createdAt":"2026-08-17T20:02:21.543273","updatedAt":"2026-08-17T20:02:21.543273","lastUsedAt":null}]
+
+[REQUEST] POST http://127.0.0.1:8098/api/dbprofile/profiles/Oracle_asis_BROWSER/connection-test
+  요청본문: (본문 없음)
+
+[REQUEST] GET http://127.0.0.1:8098/api/dbprofile/profiles
+  요청본문: (본문 없음)
+
+[RESPONSE] 200 http://127.0.0.1:8098/api/dbprofile/profiles/Oracle_asis_BROWSER/connection-test
+  응답본문: {"ok":true,"errorCode":null,"message":"접속 성공 (367ms)","databaseBanner":"Oracle Oracle AI Database 26ai Free Release 23.26.1.0.0 - Develop, Learn, and Run for Free\nVersion 23.26.1.0.0","jdbcUrl":"jdbc:oracle:thin:@tcp://192.168.0.151:1523/xepdb1","elapsedMs":367}
+
+[RESPONSE] 200 http://127.0.0.1:8098/api/dbprofile/profiles
+  응답본문: [{"profileId":1,"profileName":"Oracle_asis_BROWSER","dbmsType":"ORACLE","host":"192.168.0.151","port":1523,"databaseName":"xepdb1","username":"nxdnp","sslMode":null,"connectType":"service_name","serviceName":"xepdb1","sid":null,"schemaName":"NXDNP","hasPassword":true,"createdAt":"2026-08-17T20:02:21.543273","updatedAt":"2026-08-17T20:02:21.543273","lastUsedAt":"2026-08-17T20:02:22.702801"}]
+
+====================================================================================================
+STEP 5 — 응답 원문 비밀번호 노출 검사 (마스킹 전 원문 기준)
+====================================================================================================
+  200 http://127.0.0.1:8098/api/dbprofile/profiles
+     password 키 포함 = False / 실제 비밀번호 값 포함 = False
+  200 http://127.0.0.1:8098/api/dbprofile/profiles
+     password 키 포함 = False / 실제 비밀번호 값 포함 = False
+  200 http://127.0.0.1:8098/api/dbprofile/profiles/Oracle_asis_BROWSER/connection-test
+     password 키 포함 = False / 실제 비밀번호 값 포함 = False
+  200 http://127.0.0.1:8098/api/dbprofile/profiles
+     password 키 포함 = False / 실제 비밀번호 값 포함 = False
+
+판정: ✅ 모든 응답에서 password 키/값 모두 미노출
