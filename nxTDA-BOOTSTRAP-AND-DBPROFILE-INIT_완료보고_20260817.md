@@ -444,6 +444,7 @@ nxDTV 코드를 복사하지 않았다 — 설계 요점만 옮겨 Java 로 새�
 ================================================================================
 7. git 커밋 / 원격 반영
 ================================================================================
+7-1. 소스 저장소 — nxTDA-src
 저장소 : X:\Projects\nxTDA → https://github.com/kr0xx3xxx0xxx-coder/nxTDA-src.git (main)
 
   dbad06a4c5f2b32c2bb9e472c2ef69959091452c  2026-08-17 19:47:44
@@ -467,9 +468,41 @@ nxDTV 코드를 복사하지 않았다 — 설계 요점만 옮겨 Java 로 새�
       templates/dbprofile.html(304) schema/nxtda_dbprofile_schema.sql(35)
       gradle.properties(6, 신규) build.gradle(+6) application.yml(+26/-1)
 
-원격 반영 확인(파트1 커밋 후, 수동 push 없이 훅이 처리):
-  local  HEAD        : f2e71c1a0f9e405c38be36bade4abc4a10d7bccd
-  remote origin/main : f2e71c1a0f9e405c38be36bade4abc4a10d7bccd
+  원격 반영 확인(파트1 커밋 후, 수동 push 없이 훅이 처리):
+    local  HEAD        : f2e71c1a0f9e405c38be36bade4abc4a10d7bccd
+    remote origin/main : f2e71c1a0f9e405c38be36bade4abc4a10d7bccd
+
+7-2. 검증 저장소 — nxTDA-verify (완료보고 + 증적)
+저장소 : https://github.com/kr0xx3xxx0xxx-coder/nxTDA-verify.git (main)
+작업 클론 : X:\Verify\nxTDA\_rpt_push
+
+  dbe7a7954bb6c239e4d6bc71095704de1fba5847  2026-08-17 20:11:24 +0900
+    작업명 : nxTDA-BOOTSTRAP-AND-DBPROFILE-INIT — 완료보고 + 증적
+    14 files changed, 1486 insertions(+)
+      nxTDA-BOOTSTRAP-AND-DBPROFILE-INIT_완료보고_20260817.md            568줄
+        (이 커밋 시점 기준 568줄. 이후 7장·8-2 보강으로 본문을 개정해 613줄이 되었고,
+         개정본은 같은 저장소에 후속 커밋으로 재반영했다. 지금 읽고 있는 파일이 개정본이다.)
+      directives/nxTDA-BOOTSTRAP-AND-DBPROFILE-INIT_지침_20260817.md      100줄
+      evidence/nxTDA-BOOTSTRAP-AND-DBPROFILE-INIT_20260817/  (12개 파일)
+        boundary_cases_output.txt(190) boundary_verify.py(173) e2e_browser.py(141)
+        storecheck_after_boundary.txt(70) e2e_browser_output.txt(62) StoreCheck.java(57)
+        bootrun_startup.log(52) storecheck_after_e2e.txt(38) nxtda_runtime.log(35)
+        e2e_01_초기화면.png / e2e_02_등록후.png / e2e_03_접속테스트.png (바이너리 3장)
+
+  원격 반영 확인 :
+    local  HEAD               : dbe7a7954bb6c239e4d6bc71095704de1fba5847
+    git ls-remote origin main : dbe7a7954bb6c239e4d6bc71095704de1fba5847  refs/heads/main
+
+  소스와 증적을 저장소 단위로 분리했다. 검증 스크립트(boundary_verify.py / e2e_browser.py /
+  StoreCheck.java)와 로그·스크린샷은 지침이 지정한 산출물 목록에 없으므로 nxTDA-src 에
+  섞지 않고 nxTDA-verify 에만 올렸다(8-3 참고). 지침 원문도 같은 커밋에 함께 넣어
+  '무엇을 요구받았고 무엇을 냈는지'를 한 저장소에서 대조할 수 있게 했다.
+
+7-3. Google Drive 사본
+  G:\내 드라이브\nxTDA-verify\reports\
+    nxTDA-BOOTSTRAP-AND-DBPROFILE-INIT_완료보고_20260817.md
+    nxTDA-BOOTSTRAP-AND-DBPROFILE-INIT_20260817_증적\ (증적 12개 파일)
+  GitHub 접근 없이도 열람할 수 있도록 동일 내용을 드라이브에도 남겼다.
 
 ================================================================================
 8. 미완료 / 한계 / 후속과제 (숨기지 않고 명시)
@@ -498,6 +531,18 @@ nxDTV 코드를 복사하지 않았다 — 설계 요점만 옮겨 Java 로 새�
     "소개서 원안(nxTDA: 문자구성 분석 수준)보다 확장된 범위"를 이미 정의하고 있고, 이번
     범위(DB 프로필)는 소개서 19~23p 와 무관한 공통 인프라(9-1장)라서 작업에 지장은 없었다.
     다만 소개서를 직접 확인하지 못한 상태로 진행했다는 점은 명시한다.
+  - 검증으로 만든 프로필 3건이 로컬에 남아 있다. 테스트 후 정리하지 않았다.
+    X:\Projects\nxTDA\data\nxtda_admin.mv.db 의 nxtda_db_profile 총 3행
+    (증적 storecheck_after_boundary.txt 원문과 동일):
+      profile_id=1  Oracle_asis_BROWSER  ORACLE  192.168.0.151:1523  ← 실브라우저 E2E 등록분
+      profile_id=2  Oracle_asis_TDA      ORACLE  192.168.0.151:1523  ← 경계값 upsert(중복명) 확인분
+      profile_id=4  Tibero_stub          TIBERO  192.168.0.99:8629   ← 스텁 미구현 응답 확인분
+    (profile_id=3 은 삭제 케이스 검증에서 지워져 비어 있다.)
+    Oracle 2건은 실제 사내 DB 접속정보이고 비밀번호도 평문으로 들어 있다. data/ 를
+    .gitignore 로 제외해 두 저장소 어디에도 올라가지 않았지만, 로컬 파일을 읽을 수 있는
+    사람은 볼 수 있다(이 항목 첫 번째 위험과 같은 성격이다). 검증 직후 상태를 그대로
+    재현·대조할 수 있게 하려고 의도적으로 남겼다.
+    → 후속: 다음 작업 착수 전 3건을 삭제하거나, 비밀번호 암호화 적용 후 재등록.
 
 8-3. 검증 절차상 정직하게 남길 사항
   - 최초 타임스탬프 측정에서 산출물이 최종 소스 수정보다 이전이었다(build.gradle 의 bootRun
@@ -543,9 +588,11 @@ TIBERO]". 스텁 3개는 supportsConnect()=false 이고 접속 시도 시 조용
 
 남은 위험은 숨기지 않는다. 비밀번호는 여전히 평문으로 저장된다(nxDTV 도 동일, 이번에 이식한
 하드닝은 '응답 노출 차단'이지 '저장 암호화'가 아니다). 인증이 없어 API 가 무인증 호출
-가능하다(요구사항 9-2의 확정 사항이지만 사실로 기록해 둔다). DB2/MSSQL 은 드라이버는 있고
-SSL 옵션 검증만 남았으므로, 사내 인스턴스 접근이 확보되는 시점에 스텁을 실구현으로 올리는
-것이 가장 비용 대비 효과가 큰 다음 단계다. 지침이 참고자료로 지정한 제품소개서 PDF 는
+가능하다(요구사항 9-2의 확정 사항이지만 사실로 기록해 둔다). 검증에 쓴 프로필 3건도 로컬 H2 에
+그대로 남겨 뒀다 — 재현을 위해 의도적으로 남긴 것이지만 평문 비밀번호를 담고 있으므로 다음 작업
+착수 전 정리 대상이다(8-2). DB2/MSSQL 은 드라이버는 있고 SSL 옵션 검증만 남았으므로, 사내
+인스턴스 접근이 확보되는 시점에 스텁을 실구현으로 올리는 것이 가장 비용 대비 효과가 큰 다음
+단계다. 지침이 참고자료로 지정한 제품소개서 PDF 는
 폴더에서 찾지 못해 요구사항 문서만 근거로 진행했다는 점도 함께 남긴다.
 
 ================================================================================
